@@ -33,6 +33,18 @@
 
 	/delete-node/ memory@80000000;
 
+	hdmi {
+		compatible = "hdmi-connector";
+		label = "hdmi";
+		type = "a";
+
+		port {
+			hdmi_in: endpoint {
+				remote-endpoint = <&hdmi_out>;
+			};
+		};
+	};
+
 	host1x@50000000 {
 		hdmi@54280000 {
 			status = "okay";
@@ -44,6 +56,14 @@
 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
 			nvidia,hpd-gpio =
 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+
+			ports {
+				port {
+					hdmi_out: endpoint {
+						remote-endpoint = <&hdmi_in>;
+					};
+				};
+			};
 		};
 
 		sor@54540000 {
@@ -53,7 +73,14 @@
 			vdd-hdmi-dp-pll-supply = <&vdd_hdmi_pll>;
 
 			nvidia,dpaux = <&dpaux>;
-			nvidia,panel = <&panel>;
+
+			ports {
+				port {
+					sor_out_panel: endpoint {
+						remote-endpoint = <&panel_in_edp>;
+					};
+				};
+			};
 		};
 
 		dpaux@545c0000 {

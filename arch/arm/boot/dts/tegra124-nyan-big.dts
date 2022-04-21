@@ -13,12 +13,15 @@
 		     "google,nyan-big-rev1", "google,nyan-big-rev0",
 		     "google,nyan-big", "google,nyan", "nvidia,tegra124";
 
-	host1x@50000000 {
-		dpaux@545c0000 {
-			aux-bus {
-				panel: panel {
-					compatible = "auo,b133xtn01";
-					backlight = <&backlight>;
+	panel: panel {
+		compatible = "auo,b133xtn01";
+		backlight = <&backlight>;
+		power-supply = <&vdd_3v3_panel>;
+
+		ports {
+			port {
+				panel_in_edp: endpoint {
+					remote-endpoint = <&sor_out_panel>;
 				};
 			};
 		};
