@@ -142,39 +142,75 @@ static int boe_enable(struct drm_panel *panel)
 	return 0;
 }
 
-static const struct drm_display_mode boe_default_mode = {
-	.clock		= 73500,
+static const struct drm_display_mode boe_modes[] = {
+	{
+		.clock		= 73500,
 
-	.hdisplay	= 800,
-	.hsync_start	= 800 + 64,
-	.hsync_end	= 800 + 64 + 16,
-	.htotal		= 800 + 64 + 16 + 64,
+		.hdisplay	= 800,
+		.hsync_start	= 800 + 64,
+		.hsync_end	= 800 + 64 + 16,
+		.htotal		= 800 + 64 + 16 + 64,
 
-	.vdisplay	= 1280,
-	.vsync_start	= 1280 + 2,
-	.vsync_end	= 1280 + 2 + 4,
-	.vtotal		= 1280 + 2 + 4 + 12,
+		.vdisplay	= 1280,
+		.vsync_start	= 1280 + 2,
+		.vsync_end	= 1280 + 2 + 4,
+		.vtotal		= 1280 + 2 + 4 + 12,
 
-	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+		.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+	},
+	{
+		.clock		= 95400,
+
+		.hdisplay	= 800,
+		.hsync_start	= 800 + 80,
+		.hsync_end	= 800 + 80 + 20,
+		.htotal		= 800 + 80 + 20 + 80,
+
+		.vdisplay	= 1280,
+		.vsync_start	= 1280 + 2,
+		.vsync_end	= 1280 + 2 + 4,
+		.vtotal		= 1280 + 2 + 4 + 12,
+
+		.type = DRM_MODE_TYPE_DRIVER,
+	},
+	{
+		.clock		= 105000,
+
+		.hdisplay	= 800,
+		.hsync_start	= 800 + 72,
+		.hsync_end	= 800 + 72 + 36,
+		.htotal		= 800 + 72 + 36 + 8,
+
+		.vdisplay	= 1280,
+		.vsync_start	= 1280 + 2,
+		.vsync_end	= 1280 + 2 + 4,
+		.vtotal		= 1280 + 2 + 4 + 12,
+
+		.type = DRM_MODE_TYPE_DRIVER,
+	},
 };
 
 static int boe_get_modes(struct drm_panel *panel,
 			 struct drm_connector *connector)
 {
 	struct boe *ctx = panel_to_boe(panel);
-	struct drm_display_mode *mode;
+	int i;
 
-	mode = drm_mode_duplicate(connector->dev, &boe_default_mode);
-	if (!mode) {
-		dev_err(panel->dev, "Failed to add mode %ux%u@%u\n",
-			boe_default_mode.hdisplay,
-			boe_default_mode.vdisplay,
-			drm_mode_vrefresh(&boe_default_mode));
-		return -ENOMEM;
+	for (i = 0; i < ARRAY_SIZE(boe_modes); i++) {
+		struct drm_display_mode *mode;
+
+		mode = drm_mode_duplicate(connector->dev, &boe_modes[i]);
+		if (!mode) {
+			dev_err(panel->dev, "Failed to add mode %ux%u@%u\n",
+				boe_modes[i].hdisplay,
+				boe_modes[i].vdisplay,
+				drm_mode_vrefresh(&boe_modes[i]));
+			return -ENOMEM;
+		}
+
+		drm_mode_set_name(mode);
+		drm_mode_probed_add(connector, mode);
 	}
-
-	drm_mode_set_name(mode);
-	drm_mode_probed_add(connector, mode);
 
 	connector->display_info.bpc = 8;
 	connector->display_info.width_mm = 216;
