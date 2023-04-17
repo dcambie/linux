@@ -8,7 +8,7 @@
 / {
 
 	model = "Google Nexus 9";
-	compatible = "google,flounder64_lte", "nvidia,tegra132";
+	compatible = "google,flounder64", "nvidia,tegra132";
 
 	aliases {
 		i2c0 = "/i2c@7000c000";
